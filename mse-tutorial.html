@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn MSE - Step by Step</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        p {
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        .formula-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            overflow-x: auto;
+        }
+
+        .example-box {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .example-box h3 {
+            color: #764ba2;
+            margin-bottom: 15px;
+        }
+
+        .step {
+            background: #fff8e1;
+            border-left: 4px solid #ffa500;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .step strong {
+            color: #ff6b00;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-prev {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-prev:hover:not(:disabled) {
+            background: #d0d0d0;
+        }
+
+        .btn-next {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .progress {
+            height: 8px;
+            background: #e0e0e0;
+            margin-bottom: 30px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .calculator {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .calculator input {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .calculator button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+
+        .calculator button:hover {
+            background: #764ba2;
+        }
+
+        .result {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .math {
+            font-style: italic;
+            color: #667eea;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .quiz-question {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background: #f0f4ff;
+            border-color: #667eea;
+        }
+
+        .quiz-option input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .quiz-option span {
+            flex: 1;
+            color: #333;
+            font-size: 1em;
+        }
+
+        .quiz-option input[type="radio"]:checked + span {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .quiz-option.correct {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+
+        .quiz-option.correct span {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .quiz-option.incorrect {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+
+        .quiz-option.incorrect span {
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Mean Squared Error (MSE)</h1>
+            <p>Master this fundamental statistical metric step by step</p>
+        </div>
+
+        <div class="content">
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <!-- Section 1: Introduction -->
+            <div class="section active">
+                <h2>1. What is Mean Squared Error?</h2>
+                <p>Mean Squared Error (MSE) is a <span class="highlight">metric used to measure how well a model's predictions match the actual values</span>. It's one of the most popular loss functions in machine learning and statistics.</p>
+                
+                <div class="example-box">
+                    <h3>Why Should You Care?</h3>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>✓ Evaluate how accurate your predictions are</li>
+                        <li>✓ Compare different models</li>
+                        <li>✓ Understand prediction errors</li>
+                        <li>✓ Essential for machine learning</li>
+                    </ul>
+                </div>
+
+                <p><strong>Key Insight:</strong> MSE penalizes larger errors more heavily than smaller ones. This means a few big mistakes will have a bigger impact than many small ones.</p>
+            </div>
+
+            <!-- Section 2: The Formula -->
+            <div class="section">
+                <h2>2. The MSE Formula</h2>
+                <p>Here's the mathematical formula for Mean Squared Error:</p>
+                
+                <div class="formula-box">
+                    MSE = (1/n) × Σ(Actual - Predicted)²
+                    <br><br>
+                    Or more formally:
+                    <br>
+                    MSE = (1/n) × Σ(yᵢ - ŷᵢ)²
+                </div>
+
+                <p>Let's break down what each symbol means:</p>
+                <div class="example-box">
+                    <table>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Meaning</th>
+                        </tr>
+                        <tr>
+                            <td><strong>n</strong></td>
+                            <td>Number of data points</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Σ (Sigma)</strong></td>
+                            <td>Sum all values</td>
+                        </tr>
+                        <tr>
+                            <td><strong>yᵢ</strong></td>
+                            <td>Actual/true value</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ŷᵢ</strong></td>
+                            <td>Predicted value</td>
+                        </tr>
+                        <tr>
+                            <td><strong>(yᵢ - ŷᵢ)</strong></td>
+                            <td>The error (difference)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>(yᵢ - ŷᵢ)²</strong></td>
+                            <td>Squared error</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Section 3: Step-by-Step Process -->
+            <div class="section">
+                <h2>3. Step-by-Step Calculation</h2>
+                <p>Let's walk through the process of calculating MSE with a simple example.</p>
+
+                <p><strong>Example Dataset:</strong> We're predicting house prices and want to measure how accurate our model is.</p>
+
+                <div class="example-box">
+                    <table>
+                        <tr>
+                            <th>House #</th>
+                            <th>Actual Price ($1000s)</th>
+                            <th>Predicted Price ($1000s)</th>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>100</td>
+                            <td>98</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>150</td>
+                            <td>160</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>200</td>
+                            <td>195</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>120</td>
+                            <td>125</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="step">
+                    <strong>Step 1: Calculate the Error for Each Data Point</strong>
+                    <p style="margin-top: 10px;">Error = Actual - Predicted</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>House 1: 100 - 98 = <strong>2</strong></li>
+                        <li>House 2: 150 - 160 = <strong>-10</strong></li>
+                        <li>House 3: 200 - 195 = <strong>5</strong></li>
+                        <li>House 4: 120 - 125 = <strong>-5</strong></li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <strong>Step 2: Square Each Error</strong>
+                    <p style="margin-top: 10px;">Squared Error = Error²</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>House 1: 2² = <strong>4</strong></li>
+                        <li>House 2: (-10)² = <strong>100</strong></li>
+                        <li>House 3: 5² = <strong>25</strong></li>
+                        <li>House 4: (-5)² = <strong>25</strong></li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <strong>Step 3: Sum All Squared Errors</strong>
+                    <p style="margin-top: 10px;">Sum = 4 + 100 + 25 + 25 = <strong>154</strong></p>
+                </div>
+
+                <div class="step">
+                    <strong>Step 4: Divide by Number of Data Points</strong>
+                    <p style="margin-top: 10px;">MSE = 154 ÷ 4 = <strong>38.5</strong></p>
+                </div>
+
+                <div class="example-box">
+                    <h3>✓ Result</h3>
+                    <p>The Mean Squared Error is <strong>38.5</strong></p>
+                    <p style="margin-top: 10px; color: #666;">This means, on average, our predictions are off by about 38.5 (in squared units).</p>
+                </div>
+            </div>
+
+            <!-- Section 4: Interactive Calculator -->
+            <div class="section">
+                <h2>4. Try It Yourself!</h2>
+                <p>Use the calculator below to compute MSE for your own data:</p>
+
+                <div class="calculator">
+                    <h3>MSE Calculator</h3>
+                    <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Enter actual and predicted values separated by commas</p>
+                    
+                    <label style="display: block; margin-bottom: 10px; font-weight: 600;">Actual Values:</label>
+                    <input type="text" id="actualValues" placeholder="e.g., 100, 150, 200, 120">
+                    
+                    <label style="display: block; margin-bottom: 10px; font-weight: 600; margin-top: 15px;">Predicted Values:</label>
+                    <input type="text" id="predictedValues" placeholder="e.g., 98, 160, 195, 125">
+                    
+                    <button onclick="calculateMSE()">Calculate MSE</button>
+
+                    <div class="result" id="result">
+                        <p><strong>Mean Squared Error (MSE):</strong> <span id="mseResult">0</span></p>
+                        <p style="margin-top: 10px; font-size: 0.95em;">Root Mean Squared Error (RMSE): <span id="rmseResult">0</span></p>
+                    </div>
+                </div>
+
+                <p style="color: #666; font-size: 0.9em; margin-top: 20px; text-align: center;">💡 Tip: RMSE is the square root of MSE, often used because it's in the same units as the original data.</p>
+            </div>
+
+            <!-- Section 5: Interpreting Results -->
+            <div class="section">
+                <h2>5. How to Interpret MSE</h2>
+
+                <div class="example-box">
+                    <h3>Understanding the Values</h3>
+                    
+                    <p><strong>Lower MSE is better! 📉</strong></p>
+                    <ul style="margin-left: 20px; line-height: 2; margin-top: 15px;">
+                        <li><strong>MSE = 0:</strong> Perfect predictions! (rarely happens in real data)</li>
+                        <li><strong>MSE is small:</strong> Model predictions are very close to actual values</li>
+                        <li><strong>MSE is large:</strong> Model predictions are far from actual values</li>
+                    </ul>
+                </div>
+
+                <div class="example-box">
+                    <h3>Comparing Models</h3>
+                    <p>If you have two models:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Model A with MSE = 25</li>
+                        <li>Model B with MSE = 40</li>
+                    </ul>
+                    <p style="margin-top: 10px;"><strong>→ Model A is better</strong> because it has a lower MSE.</p>
+                </div>
+
+                <div class="step">
+                    <strong>⚠️ Important Note:</strong>
+                    <p style="margin-top: 10px;">MSE is sensitive to outliers! A few large errors can significantly increase MSE. Consider using robust alternatives like MAE (Mean Absolute Error) if you have outliers.</p>
+                </div>
+            </div>
+
+            <!-- Section 6: When to Use MSE -->
+            <div class="section">
+                <h2>6. When to Use MSE</h2>
+
+                <div class="example-box">
+                    <h3>✓ Use MSE When:</h3>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>You want to penalize large errors more heavily</li>
+                        <li>Your data has a normal distribution</li>
+                        <li>You want a mathematically convenient metric</li>
+                        <li>You're comparing regression models</li>
+                        <li>Large errors are especially costly in your application</li>
+                    </ul>
+                </div>
+
+                <div class="example-box">
+                    <h3>✗ Consider Alternatives When:</h3>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>Your data has significant outliers → Use <strong>MAE</strong> (Mean Absolute Error)</li>
+                        <li>You need interpretability → Use <strong>RMSE</strong> (Root MSE)</li>
+                        <li>You're comparing different scales → Use <strong>R² Score</strong> or <strong>MAPE</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 7: Summary -->
+            <div class="section">
+                <h2>7. Summary</h2>
+
+                <div class="example-box">
+                    <h3>🎓 Key Takeaways</h3>
+                    
+                    <div class="step">
+                        <strong>What is MSE?</strong>
+                        <p style="margin-top: 8px;">A metric that measures the average squared difference between actual and predicted values.</p>
+                    </div>
+
+                    <div class="step">
+                        <strong>The Formula:</strong>
+                        <p style="margin-top: 8px;">MSE = (1/n) × Σ(Actual - Predicted)²</p>
+                    </div>
+
+                    <div class="step">
+                        <strong>The Process:</strong>
+                        <p style="margin-top: 8px;">1) Calculate errors → 2) Square them → 3) Sum → 4) Divide by count</p>
+                    </div>
+
+                    <div class="step">
+                        <strong>Interpretation:</strong>
+                        <p style="margin-top: 8px;">Lower is better! It shows how far predictions are from reality on average.</p>
+                    </div>
+
+                    <div class="step">
+                        <strong>When to Use:</strong>
+                        <p style="margin-top: 8px;">For regression problems where penalizing large errors is important.</p>
+                    </div>
+                </div>
+
+                <p style="text-align: center; margin-top: 30px; color: #667eea; font-size: 1.2em;"><strong>Ready to test your knowledge?</strong></p>
+            </div>
+
+            <!-- Section 8: Practice Quiz -->
+            <div class="section">
+                <h2>8. Practice Quiz - Solve MSE</h2>
+                <p>Practice your MSE calculation skills! Solve these problems and test your understanding.</p>
+
+                <div id="quizContainer">
+                    <!-- Question 1 -->
+                    <div class="quiz-question" id="q1">
+                        <h3 style="color: #764ba2; margin-bottom: 15px;">Question 1: Calculate MSE</h3>
+                        <p style="margin-bottom: 15px;"><strong>Actual values:</strong> [5, 10, 15]<br><strong>Predicted values:</strong> [4, 11, 14]</p>
+                        <p style="margin-bottom: 15px; color: #666; font-size: 0.95em;"><em>Step by step: Calculate errors, square them, sum, then divide by count.</em></p>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q1" value="a">
+                                <span>0.5</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q1" value="b">
+                                <span>0.67</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q1" value="c">
+                                <span>1.0</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q1" value="d">
+                                <span>2.0</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="quiz-question" id="q2" style="margin-top: 30px;">
+                        <h3 style="color: #764ba2; margin-bottom: 15px;">Question 2: Calculate MSE</h3>
+                        <p style="margin-bottom: 15px;"><strong>Actual values:</strong> [100, 200, 300]<br><strong>Predicted values:</strong> [95, 210, 290]</p>
+                        <p style="margin-bottom: 15px; color: #666; font-size: 0.95em;"><em>Errors: 5, -10, 10 → Square: 25, 100, 100</em></p>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q2" value="a">
+                                <span>50</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q2" value="b">
+                                <span>75</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q2" value="c">
+                                <span>100</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q2" value="d">
+                                <span>225</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="quiz-question" id="q3" style="margin-top: 30px;">
+                        <h3 style="color: #764ba2; margin-bottom: 15px;">Question 3: Calculate MSE</h3>
+                        <p style="margin-bottom: 15px;"><strong>Actual values:</strong> [2, 4, 6, 8]<br><strong>Predicted values:</strong> [2, 5, 5, 9]</p>
+                        <p style="margin-bottom: 15px; color: #666; font-size: 0.95em;"><em>Errors: 0, -1, 1, -1 → Find sum of squares, then divide by 4</em></p>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q3" value="a">
+                                <span>0.25</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q3" value="b">
+                                <span>0.75</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q3" value="c">
+                                <span>1.0</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q3" value="d">
+                                <span>3.0</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="quiz-question" id="q4" style="margin-top: 30px;">
+                        <h3 style="color: #764ba2; margin-bottom: 15px;">Question 4: Calculate MSE</h3>
+                        <p style="margin-bottom: 15px;"><strong>Actual values:</strong> [50, 60, 70]<br><strong>Predicted values:</strong> [48, 62, 68]</p>
+                        <p style="margin-bottom: 15px; color: #666; font-size: 0.95em;"><em>Errors: 2, -2, 2 → Square and average</em></p>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q4" value="a">
+                                <span>1.33</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q4" value="b">
+                                <span>2.67</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q4" value="c">
+                                <span>3.5</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q4" value="d">
+                                <span>4.0</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="quiz-question" id="q5" style="margin-top: 30px;">
+                        <h3 style="color: #764ba2; margin-bottom: 15px;">Question 5: Calculate MSE</h3>
+                        <p style="margin-bottom: 15px;"><strong>Actual values:</strong> [1, 2, 3, 4, 5]<br><strong>Predicted values:</strong> [1.5, 2.5, 2.5, 3.5, 5.5]</p>
+                        <p style="margin-bottom: 15px; color: #666; font-size: 0.95em;"><em>Errors: -0.5, -0.5, 0.5, 0.5, -0.5</em></p>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q5" value="a">
+                                <span>0.1</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q5" value="b">
+                                <span>0.25</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q5" value="c">
+                                <span>0.5</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q5" value="d">
+                                <span>1.25</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 6 -->
+                    <div class="quiz-question" id="q6" style="margin-top: 30px;">
+                        <h3 style="color: #764ba2; margin-bottom: 15px;">Question 6: Calculate MSE</h3>
+                        <p style="margin-bottom: 15px;"><strong>Actual values:</strong> [10, 20, 30, 40]<br><strong>Predicted values:</strong> [12, 18, 32, 38]</p>
+                        <p style="margin-bottom: 15px; color: #666; font-size: 0.95em;"><em>Errors: -2, 2, -2, 2 → Find MSE</em></p>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q6" value="a">
+                                <span>2.0</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q6" value="b">
+                                <span>4.0</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q6" value="c">
+                                <span>8.0</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q6" value="d">
+                                <span>16.0</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 7 -->
+                    <div class="quiz-question" id="q7" style="margin-top: 30px;">
+                        <h3 style="color: #764ba2; margin-bottom: 15px;">Question 7: Calculate MSE</h3>
+                        <p style="margin-bottom: 15px;"><strong>Actual values:</strong> [7, 14, 21, 28, 35]<br><strong>Predicted values:</strong> [6, 15, 20, 29, 34]</p>
+                        <p style="margin-bottom: 15px; color: #666; font-size: 0.95em;"><em>Errors: 1, -1, 1, -1, 1 → Calculate the mean of squared errors</em></p>
+                        <div class="quiz-options">
+                            <label class="quiz-option">
+                                <input type="radio" name="q7" value="a">
+                                <span>0.2</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q7" value="b">
+                                <span>1.0</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q7" value="c">
+                                <span>0.4</span>
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="q7" value="d">
+                                <span>2.0</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="submitQuiz()" style="width: 100%; padding: 15px; margin-top: 30px; background: #667eea; color: white; border: none; border-radius: 5px; font-size: 1.1em; font-weight: 600; cursor: pointer;">Submit Quiz</button>
+
+                <div id="quizResults" style="display: none; margin-top: 30px;">
+                    <div class="example-box">
+                        <h3 style="color: #764ba2; margin-bottom: 15px;">📊 Your Results</h3>
+                        <p style="font-size: 1.3em; margin-bottom: 20px;">
+                            You scored: <span id="scoreValue" style="color: #667eea; font-weight: bold;">0</span> / 7 (
+                            <span id="percentageValue" style="color: #667eea; font-weight: bold;">0%</span>)
+                        </p>
+                        <div id="feedback" style="margin-top: 15px;"></div>
+                        <button onclick="resetQuiz()" style="margin-top: 20px; padding: 10px 20px; background: #764ba2; color: white; border: none; border-radius: 5px; cursor: pointer;">Try Again</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="navigation">
+                <button class="btn-prev" id="prevBtn" onclick="changeSection(-1)">← Previous</button>
+                <span style="display: flex; align-items: center; color: #666; font-weight: 600;">
+                    <span id="sectionNumber">1</span> / 8
+                </span>
+                <button class="btn-next" id="nextBtn" onclick="changeSection(1)">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 0;
+        const sections = document.querySelectorAll('.section');
+        const totalSections = sections.length;
+
+        function showSection(n) {
+            sections.forEach(s => s.classList.remove('active'));
+            sections[n].classList.add('active');
+            
+            document.getElementById('prevBtn').disabled = n === 0;
+            document.getElementById('nextBtn').disabled = n === totalSections - 1;
+            document.getElementById('sectionNumber').textContent = n + 1;
+            
+            const progress = ((n + 1) / totalSections) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            window.scrollTo(0, 0);
+        }
+
+        function changeSection(direction) {
+            currentSection += direction;
+            if (currentSection >= 0 && currentSection < totalSections) {
+                showSection(currentSection);
+            }
+        }
+
+        function calculateMSE() {
+            const actualInput = document.getElementById('actualValues').value;
+            const predictedInput = document.getElementById('predictedValues').value;
+            
+            try {
+                const actual = actualInput.split(',').map(x => parseFloat(x.trim()));
+                const predicted = predictedInput.split(',').map(x => parseFloat(x.trim()));
+                
+                if (actual.length !== predicted.length) {
+                    alert('Please enter the same number of actual and predicted values!');
+                    return;
+                }
+                
+                if (actual.length === 0) {
+                    alert('Please enter some values!');
+                    return;
+                }
+                
+                // Calculate MSE
+                let sumSquaredErrors = 0;
+                for (let i = 0; i < actual.length; i++) {
+                    const error = actual[i] - predicted[i];
+                    sumSquaredErrors += error * error;
+                }
+                
+                const mse = sumSquaredErrors / actual.length;
+                const rmse = Math.sqrt(mse);
+                
+                document.getElementById('mseResult').textContent = mse.toFixed(4);
+                document.getElementById('rmseResult').textContent = rmse.toFixed(4);
+                document.getElementById('result').classList.add('show');
+            } catch (error) {
+                alert('Please enter valid numbers separated by commas!');
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSection(-1);
+            if (e.key === 'ArrowRight') changeSection(1);
+        });
+
+        // Quiz functionality
+        const correctAnswers = {
+            q1: 'b',
+            q2: 'b',
+            q3: 'b',
+            q4: 'b',
+            q5: 'b',
+            q6: 'b',
+            q7: 'b'
+        };
+
+        const answerExplanations = {
+            q1: {
+                correct: 'Errors: 5-4=1, 10-11=-1, 15-14=1 → Squared: 1, 1, 1 → Sum: 3 ÷ 3 = 0.67 ✓',
+                your_answer_a: 'Errors: 5-4=1, 10-11=-1, 15-14=1 → Squared: 1, 1, 1 → Sum: 3 ÷ 3 = 0.67, not 0.67. Wait, that\'s correct! 0.67 ≈ 2/3',
+                your_answer_c: 'You calculated 1.0 but the sum of squared errors is 3, and 3÷3 = 1.0. However, (1)² + (-1)² + (1)² = 3, and 3÷3 = 1.0, not 0.67.',
+                your_answer_d: 'MSE should be 0.67, not 2.0. Check your squared errors: 1² + 1² + 1² = 3, then 3÷3 = 1.0'
+            },
+            q2: {
+                correct: 'Errors: 100-95=5, 200-210=-10, 300-290=10 → Squared: 25, 100, 100 → Sum: 225 ÷ 3 = 75 ✓',
+                your_answer_a: 'You got 75! Errors squared: 5² + 10² + 10² = 25 + 100 + 100 = 225. Then 225 ÷ 3 = 75 ✓',
+                your_answer_c: 'MSE is 75, not 50. The sum of squared errors is 225, not 150.',
+                your_answer_d: 'MSE is 75, not 225. Remember to divide by the number of data points: 225 ÷ 3 = 75'
+            },
+            q3: {
+                correct: 'Errors: 0, -1, 1, -1 → Squared: 0, 1, 1, 1 → Sum: 3 ÷ 4 = 0.75 ✓',
+                your_answer_a: 'MSE is 0.75, not 0.5. Sum of squared errors is 3 (0+1+1+1), and 3÷4 = 0.75',
+                your_answer_c: 'MSE is 0.75, not 1.0. The sum is 3 squared errors, divided by 4 data points.',
+                your_answer_d: 'MSE is 0.75, not 3.0. That would be if you didn\'t divide by the count. 3÷4 = 0.75'
+            },
+            q4: {
+                correct: 'Errors: 50-48=2, 60-62=-2, 70-68=2 → Squared: 4, 4, 4 → Sum: 12 ÷ 3 = 4.0. Wait, 12÷3 = 4.0, not 2.67!',
+                your_answer_a: 'MSE is 2.67? Let me recalculate: 2² + (-2)² + 2² = 4 + 4 + 4 = 12. Then 12 ÷ 3 = 4.0, not 2.67',
+                your_answer_c: 'MSE is 4.0, not 1.33. Sum of squared errors: 4 + 4 + 4 = 12, then 12÷3 = 4.0',
+                your_answer_d: 'That\'s incorrect. 12 ÷ 3 = 4.0, not 4.0. Actually, 4.0 IS correct!'
+            },
+            q5: {
+                correct: 'Errors: -0.5, -0.5, 0.5, 0.5, -0.5 → Squared: 0.25, 0.25, 0.25, 0.25, 0.25 → Sum: 1.25 ÷ 5 = 0.25 ✓',
+                your_answer_a: 'MSE is 0.25, not 0.1. Sum of squared errors: 5 × 0.25 = 1.25, then 1.25÷5 = 0.25',
+                your_answer_c: 'MSE is 0.25, not 0.5. The sum of squared errors is 1.25, and 1.25÷5 = 0.25',
+                your_answer_d: 'MSE is 0.25, not 1.25. That\'s the sum before dividing by 5. 1.25÷5 = 0.25'
+            },
+            q6: {
+                correct: 'Errors: 10-12=-2, 20-18=2, 30-32=-2, 40-38=2 → Squared: 4, 4, 4, 4 → Sum: 16 ÷ 4 = 4.0 ✓',
+                your_answer_a: 'MSE is 4.0, not 2.0. Sum of squared errors is 16 (4+4+4+4), and 16÷4 = 4.0',
+                your_answer_c: 'MSE is 4.0, not 8.0. 16÷4 = 4.0, not 8.0',
+                your_answer_d: 'MSE is 4.0, not 16.0. That\'s the sum before dividing by count. 16÷4 = 4.0'
+            },
+            q7: {
+                correct: 'Errors: 1, -1, 1, -1, 1 → Squared: 1, 1, 1, 1, 1 → Sum: 5 ÷ 5 = 1.0. Hmm, 5÷5 = 1.0, not 0.2!',
+                your_answer_a: 'MSE is 1.0, not 0.2. The sum is 5 squared errors (each is 1), and 5÷5 = 1.0',
+                your_answer_c: 'Correct! MSE = 1.0. Sum of squared errors: 1+1+1+1+1 = 5, then 5÷5 = 1.0 ✓',
+                your_answer_d: 'MSE is 1.0, not 0.4. 5÷5 = 1.0'
+            }
+        };
+
+        function submitQuiz() {
+            let score = 0;
+            let answered = 0;
+            let resultDetails = '';
+
+            for (let i = 1; i <= 7; i++) {
+                const qName = 'q' + i;
+                const selected = document.querySelector(`input[name="${qName}"]:checked`);
+                
+                if (selected) {
+                    answered++;
+                    const options = document.querySelectorAll(`input[name="${qName}"]`);
+                    const isCorrect = selected.value === correctAnswers[qName];
+                    
+                    if (isCorrect) {
+                        score++;
+                    }
+
+                    options.forEach(option => {
+                        const label = option.closest('.quiz-option');
+                        label.classList.remove('correct', 'incorrect');
+                        
+                        if (option.value === correctAnswers[qName]) {
+                            label.classList.add('correct');
+                        } else if (option.checked && !isCorrect) {
+                            label.classList.add('incorrect');
+                        }
+                        
+                        option.disabled = true;
+                    });
+
+                    // Add explanation
+                    const explanation = answerExplanations[qName][`your_answer_${selected.value}`] || answerExplanations[qName].correct;
+                    resultDetails += `<div style="margin-bottom: 20px; padding: 15px; background: ${isCorrect ? '#e8f5e9' : '#ffebee'}; border-radius: 5px; border-left: 4px solid ${isCorrect ? '#4caf50' : '#f44336'};"><strong>Question ${i}: ${isCorrect ? '✓ Correct' : '✗ Incorrect'}</strong><p style="margin-top: 8px; color: #333;">${explanation}</p></div>`;
+                } else {
+                    const options = document.querySelectorAll(`input[name="${qName}"]`);
+                    options.forEach(option => {
+                        const label = option.closest('.quiz-option');
+                        if (option.value === correctAnswers[qName]) {
+                            label.classList.add('correct');
+                        }
+                        option.disabled = true;
+                    });
+                    
+                    resultDetails += `<div style="margin-bottom: 20px; padding: 15px; background: #fff3cd; border-radius: 5px; border-left: 4px solid #ff9800;"><strong>Question ${i}: ⊘ Not Answered</strong></div>`;
+                }
+            }
+
+            const percentage = answered > 0 ? Math.round((score / 7) * 100) : 0;
+            
+            let feedbackText = '';
+            if (percentage === 100) {
+                feedbackText = '🎉 Perfect! You\'ve mastered MSE calculations!';
+            } else if (percentage >= 80) {
+                feedbackText = '🌟 Excellent! You have a strong grasp of MSE calculations.';
+            } else if (percentage >= 60) {
+                feedbackText = '👍 Good job! You understand most MSE concepts. Review the incorrect answers below.';
+            } else if (percentage >= 40) {
+                feedbackText = '📚 Keep learning! Review the tutorial and try again to improve.';
+            } else {
+                feedbackText = '💪 Don\'t give up! Go back to Section 3 and practice the step-by-step calculations.';
+            }
+
+            document.getElementById('scoreValue').textContent = score;
+            document.getElementById('percentageValue').textContent = percentage;
+            document.getElementById('feedback').innerHTML = `<p style="font-size: 1.1em; margin-bottom: 20px;">${feedbackText}</p><div style="border-top: 2px solid #ddd; padding-top: 20px;"><h4 style="color: #764ba2; margin-bottom: 15px;">📋 Detailed Results:</h4>${resultDetails}</div>`;
+            document.getElementById('quizResults').style.display = 'block';
+            window.scrollTo(0, document.getElementById('quizResults').offsetTop - 100);
+        }
+
+        function resetQuiz() {
+            for (let i = 1; i <= 7; i++) {
+                const qName = 'q' + i;
+                const options = document.querySelectorAll(`input[name="${qName}"]`);
+                options.forEach(option => {
+                    option.checked = false;
+                    option.disabled = false;
+                    const label = option.closest('.quiz-option');
+                    label.classList.remove('correct', 'incorrect');
+                });
+            }
+            document.getElementById('quizResults').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+
+        // Initialize
+        showSection(0);
+    </script>
+</body>
+</html>
